@@ -1,0 +1,12 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: jenkins2-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: jenkins2
+  namespace: kube-ops
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: ""

@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: fyp-mininet-deployment
+spec:
+  replicas: 1
+  template: 
+    metadata:
+      labels:
+        app: fyp-mininet
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu
+        command: ["sleep", "100000"]

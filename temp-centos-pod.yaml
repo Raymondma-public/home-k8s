@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: centos-deployment
+  namespace: kube-ops
+spec:
+  replicas: 1
+  template: 
+    metadata:
+      labels:
+        app: temp-centos
+    spec:
+      containers:
+      - name: centos
+        image: centos
+        command: ["sleep", "100000"]
