@@ -1,1 +1,42 @@
-456
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ssh-demo
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ssh-demo
+  template:
+    metadata:
+#      annotations:
+#        security.alpha.kubernetes.io/unsafe-sysctls: kernel.msgmnb=13107200,kernel.msgmni=256,kernel.msgmax=65536,kernel.shmmax=69719476736,kernel.sem=500 256000 250 1024
+      labels:
+        app: ssh-demo
+    spec:
+#      nodeSelector:
+#        cslckind1: test
+      containers:
+      - name: ssh-demo
+        image: raymondmapublic/ssh-demo
+#        imagePullPolicy: Never
+        ports:
+        - containerPort: 22
+       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ssh-demo-svc
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: ssh-demo
+  ports:
+  - protocol: TCP
+    port: 22
+    nodePort: 30032
+    targetPort: 22

@@ -2,6 +2,7 @@ package com.ma.raymond.k8smanagerservice.controllers;
 
 import com.ma.raymond.k8smanagerservice.models.VMConfigs;
 import com.ma.raymond.k8smanagerservice.models.httpObject.ResponseDTO;
+import com.ma.raymond.k8smanagerservice.utils.OSValidator;
 import com.ma.raymond.k8smanagerservice.utils.StreamGobbler;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class K8sManagerController {
 
     @GetMapping("/getVMConfig")
     public ResponseDTO buildVM(@RequestParam("token") String token, @RequestParam("vmCode") String vmCode) {
+        System.out.println("buildVM");
         //token authen
 
         //user author
@@ -50,7 +52,7 @@ public class K8sManagerController {
     }
 
     @PostMapping("/buildVM")
-    public String buildVM(@RequestParam("token") String token, @RequestParam("vmCode") String vmCode, @RequestParam("dockerBuildString") String dockerBuildString, @RequestParam("k8sConfig") String k8sConfig) throws IOException, InterruptedException {
+    public ResponseDTO buildVM(@RequestParam("token") String token, @RequestParam("vmCode") String vmCode, @RequestParam("dockerBuildString") String dockerBuildString, @RequestParam("k8sConfig") String k8sConfig) throws IOException, InterruptedException {
         //token authen
 
         //user author
@@ -74,14 +76,16 @@ public class K8sManagerController {
 //        int exitCode = process.waitFor();
 //        assert exitCode == 0;
 
-        Process process = Runtime.getRuntime().exec(String.format("kubectl apply -f k8sConfig.yaml", vmCode));
-        StreamGobbler streamGobbler =
-                new StreamGobbler(process.getInputStream(), System.out::println);
-        Executors.newSingleThreadExecutor().submit(streamGobbler);
-        int exitCode = process.waitFor();
-        assert exitCode == 0;
-
-        return dockerBuildString + "\n" + k8sConfig;
+        //For Linux
+        if(OSValidator.isUnix()) {
+            Process process = Runtime.getRuntime().exec(String.format("kubectl apply -f k8sConfig.yaml", vmCode));
+            StreamGobbler streamGobbler =
+                    new StreamGobbler(process.getInputStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(streamGobbler);
+            int exitCode = process.waitFor();
+            assert exitCode == 0;
+        }
+        return new ResponseDTO("", "VM Build successfully", "", "temp instance", "helpUrl", null);
     }
 
     @RequestMapping("/vmStatus")

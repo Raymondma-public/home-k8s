@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+</head>
+<body>
+
+dockerBuildString<textarea id="dockerBuildString" type="text" name="dockerBuildString" rows="10"
+                           cols="60"></textarea><br/>
+k8sConfig<textarea id="k8sConfig" type="text" name="k8sConfig" rows="10" cols="60"></textarea><br/>
+vmCode<input id="vmCode" type="text" name="vmCode"></input><br/>
+<input id="token" type="hidden" name="token" value="1"></input><br/>
+<button id="getVMConfig">getVMConfig</button>
+<button id="buildVM">build VM</button>
+<br/>
+#dockerBuild===================<br/>
+<div id="dockerBuildText" style="white-space: pre-wrap;"></div>
+<br/>
+
+#k8s config===================<br/>
+<div id="k8sConfigText" style="white-space: pre-wrap;"></div>
+<br/>
+<!--        <button id="build">getStatus</button>-->
+
+<script>
+    $("#getVMConfig").click(function () {
+        token = $("#token").val();
+        vmCode = $("#vmCode").val();
+        data = {"token": token, "vmCode": vmCode};
+        $.get("/getVMConfig",
+            data
+        ).done(function (rsp) {
+            // alert("Done: " + JSON.stringify(rsp));
+            // alert();
+            $("#dockerBuildText").text(rsp.obj.dockerBuildString)
+            $("#k8sConfigText").text(rsp.obj.k8sConfig)
+        }).fail(function (jqXHR, textStatus) {
+            alert("Request failed: " + textStatus);
+        });
+    });
+
+    $("#buildVM").click(function () {
+        token = $("#token").val();
+        vmCode = $("#vmCode").val();
+        dockerBuildString = $("#dockerBuildString").val();
+        k8sConfig = $("#k8sConfig").val();
+        data = {"token": token, "vmCode": vmCode,dockerBuildString,k8sConfig};
+        $.post("/buildVM",
+            data
+        ).done(function (rsp) {
+            // alert("Done: " + JSON.stringify(rsp));
+            alert(rsp.message);
+            // $("#dockerBuildText").text(rsp.obj.dockerBuildString)
+            // $("#k8sConfigText").text(rsp.obj.k8sConfig)
+        }).fail(function (jqXHR, textStatus) {
+            alert("Request failed: " + textStatus);
+        });
+    });
+
+</script>
+</body>
+</html>
