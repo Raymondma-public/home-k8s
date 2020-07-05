@@ -64,8 +64,8 @@ spec:
       serviceAccountName: internal-kubectl
       containers:
         - name: k8s-manager
-          image: raymondmapublic/k8s-manager-service:v1
-          imagePullPolicy: Never
+          image: raymondmapublic/k8s-manager-service:v6
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
