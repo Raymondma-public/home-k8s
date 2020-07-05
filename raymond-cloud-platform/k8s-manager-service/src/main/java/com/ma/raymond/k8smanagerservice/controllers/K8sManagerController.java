@@ -80,7 +80,7 @@ public class K8sManagerController {
         //For Linux
         if(OSValidator.isUnix()) {
 //            Process process = Runtime.getRuntime().exec(String.format("cd "+vmCode+" && kubectl apply -f k8sConfig.yaml", vmCode));
-            ProcessBuilder builder = new ProcessBuilder("/usr/bin/bash", "-c","cd "+vmCode+" && kubectl apply -f k8sConfig.yaml");
+            ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c","cd "+vmCode+" && kubectl apply -f k8sConfig.yaml");
 
             builder.redirectErrorStream(true);
             Process process = builder.start();
