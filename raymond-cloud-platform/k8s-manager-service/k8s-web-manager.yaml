@@ -8,7 +8,7 @@ kind: Role
 metadata:
   name: modify-pods
 rules:
-  - apiGroups: [""]
+  - apiGroups: ["","v1","apps/v1"]
     resources: ["deployments","pods"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ---
@@ -64,7 +64,7 @@ spec:
       serviceAccountName: internal-kubectl
       containers:
         - name: k8s-manager
-          image: raymondmapublic/k8s-manager-service:v6
+          image: raymondmapublic/k8s-manager-service:v9
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
