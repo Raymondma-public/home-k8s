@@ -5,6 +5,8 @@ RUN apt update && \
       chmod +x ./kubectl && \
       mv ./kubectl /usr/local/bin/kubectl
 VOLUME /tmp
+
+FROM openjdk:8-jdk-alpine
 ADD build/libs/k8s-manager-service-0.0.1-SNAPSHOT.jar app.jar
 CMD kubectl get po
 ENTRYPOINT ["java","-jar","-Dspring.profiles.active=<SPRING_PROFILES_ACTIVE>","/app.jar"]

@@ -23,13 +23,67 @@ roleRef:
   kind: Role
   name: modify-pods
   apiGroup: rbac.authorization.k8s.io
+#---
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#  name: internal-kubectl
+#spec:
+#  serviceAccountName: internal-kubectl
+#  containers:
+#    - name: internal-kubectl
+#      image: raymondmapublic/k8s-manager
 ---
+kind: Service
 apiVersion: v1
-kind: Pod
 metadata:
-  name: internal-kubectl
+  name: k8s-manager-service
 spec:
-  serviceAccountName: internal-kubectl
-  containers:
-    - name: internal-kubectl
-      image: trstringer/internal-kubectl:latest
+  selector:
+    app: k8s-manager
+  ports:
+    - protocol: TCP
+      port: 8080
+      nodePort: 30084
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-manager
+spec:
+  selector:
+    matchLabels:
+      app: k8s-manager
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: k8s-manager
+    spec:
+      serviceAccountName: internal-kubectl
+      containers:
+        - name: k8s-manager
+          image: raymondmapublic/k8s-manager-service:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: branch
+              value: prod
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: KubernetesLivenessProbe
+            initialDelaySeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: KubernetesLivenessProbe
+            initialDelaySeconds: 20
